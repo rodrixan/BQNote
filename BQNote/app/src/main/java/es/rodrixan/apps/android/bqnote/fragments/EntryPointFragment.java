@@ -38,7 +38,9 @@ public class EntryPointFragment extends Fragment {
 
     private Callbacks mCallbacks;
 
-
+    /**
+     * @return new instance of  this fragment
+     */
     public static Fragment newInstance() {
         return new EntryPointFragment();
     }
@@ -70,16 +72,21 @@ public class EntryPointFragment extends Fragment {
 
         wireToolbar(v);
         if (!EvernoteSession.getInstance().isLoggedIn()) {
-            Log.d(Utils.LOG_TAG, "Logging in...");
+            Log.i(Utils.LOG_TAG, "Logging in...");
             EvernoteSession.getInstance().authenticate(getActivity());
         } else {
-            Log.d(Utils.LOG_TAG, "Already Logged!");
+            Log.i(Utils.LOG_TAG, "Already Logged!");
             Toast.makeText(getActivity(), "LOGIN COMPLETED", Toast.LENGTH_SHORT).show();
         }
         return v;
     }
 
-
+    /**
+     * Attach a toolbar to the activity
+     *
+     * @param v view where the toolbar is from
+     * @return the toolbar attached
+     */
     private Toolbar wireToolbar(final View v) {
         final Toolbar toolbar = (Toolbar) v.findViewById(R.id.toolbar);
         mCallbacks.setToolBar(toolbar);
@@ -96,8 +103,8 @@ public class EntryPointFragment extends Fragment {
     public boolean onOptionsItemSelected(final MenuItem item) {
 
         switch (item.getItemId()) {
-            case R.id.action_settings:
-                Toast.makeText(getActivity(), "Settings not available yet!", Toast.LENGTH_SHORT).show();
+            case R.id.action_logout:
+                Toast.makeText(getActivity(), "Logout not available yet!", Toast.LENGTH_SHORT).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

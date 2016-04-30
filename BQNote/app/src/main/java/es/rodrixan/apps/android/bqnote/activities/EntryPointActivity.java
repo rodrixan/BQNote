@@ -28,9 +28,12 @@ public class EntryPointActivity extends SingleFragmentActivity implements EntryP
         return EntryPointFragment.newInstance();
     }
 
+    /**
+     * Creates the Evernote session when activity is created
+     */
     @Override
     protected void init() {
-        Log.d(Utils.LOG_TAG, "Creating Evernote Session");
+        Log.i(Utils.LOG_TAG, "Creating Evernote Session");
         mEvernoteSession = new EvernoteSession.Builder(this)
                 .setEvernoteService(EVERNOTE_SERVICE)
                 .setSupportAppLinkedNotebooks(SUPPORT_APP_LINKED_NOTEBOOKS)
@@ -47,9 +50,9 @@ public class EntryPointActivity extends SingleFragmentActivity implements EntryP
     public void onLoginFinished(final boolean successful) {
         if (successful) {
             Toast.makeText(this, "SUCCESS!!!", Toast.LENGTH_SHORT).show();
-            Log.d(Utils.LOG_TAG, "Login Successful");
+            Log.i(Utils.LOG_TAG, "Login Successful");
         } else {
-            Log.d(Utils.LOG_TAG, "Login Error. Closing app...");
+            Log.i(Utils.LOG_TAG, "Login canceled. Closing app...");
             finish();
         }
     }
