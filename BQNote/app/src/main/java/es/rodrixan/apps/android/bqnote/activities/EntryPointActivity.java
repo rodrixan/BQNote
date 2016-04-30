@@ -9,19 +9,18 @@ import com.evernote.client.android.EvernoteSession;
 import com.evernote.client.android.login.EvernoteLoginFragment;
 
 import es.rodrixan.apps.android.bqnote.fragments.EntryPointFragment;
+import es.rodrixan.apps.android.bqnote.services.EvernoteService;
+import es.rodrixan.apps.android.bqnote.services.EvernoteServiceImpl;
 import es.rodrixan.apps.android.bqnote.utilities.Utils;
 
 /**
- * Entry Point of the App. Checks the user login
+ * Entry point of the App. Checks the user login
  */
 public class EntryPointActivity extends SingleFragmentActivity implements EntryPointFragment.Callbacks, EvernoteLoginFragment.ResultCallback {
 
-    private static final String CONSUMER_KEY = "rodrixan-5042";
-    private static final String CONSUMER_SECRET = "3caeb6da5a2e5ce5";
-    private static final EvernoteSession.EvernoteService EVERNOTE_SERVICE = EvernoteSession.EvernoteService.SANDBOX;
-    private static final boolean SUPPORT_APP_LINKED_NOTEBOOKS = false;
 
     private EvernoteSession mEvernoteSession;
+    private final EvernoteService mEvernoteService = new EvernoteServiceImpl();
 
     @Override
     protected Fragment createFragment() {
@@ -34,16 +33,17 @@ public class EntryPointActivity extends SingleFragmentActivity implements EntryP
     @Override
     protected void init() {
         Log.i(Utils.LOG_TAG, "Creating Evernote Session");
-        mEvernoteSession = new EvernoteSession.Builder(this)
-                .setEvernoteService(EVERNOTE_SERVICE)
-                .setSupportAppLinkedNotebooks(SUPPORT_APP_LINKED_NOTEBOOKS)
-                .build(CONSUMER_KEY, CONSUMER_SECRET)
-                .asSingleton();
+        mEvernoteSession = mEvernoteService.createSession(this);
     }
 
     @Override
     public void setToolBar(final Toolbar toolbar) {
         setSupportActionBar(toolbar);
+    }
+
+    @Override
+    public EvernoteService getEvernoteService() {
+        return mEvernoteService;
     }
 
     @Override

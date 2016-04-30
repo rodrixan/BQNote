@@ -15,9 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.evernote.client.android.EvernoteSession;
-
 import es.rodrixan.apps.android.bqnote.R;
+import es.rodrixan.apps.android.bqnote.services.EvernoteService;
 import es.rodrixan.apps.android.bqnote.utilities.Utils;
 
 /**
@@ -34,9 +33,15 @@ public class EntryPointFragment extends Fragment {
          * @param toolbar toolbar to set in the parent activity
          */
         void setToolBar(Toolbar toolbar);
+
+        /**
+         * @return evernote service in order to call the methods needed
+         */
+        EvernoteService getEvernoteService();
     }
 
     private Callbacks mCallbacks;
+    private EvernoteService mEvernoteService;
 
     /**
      * @return new instance of  this fragment
@@ -51,6 +56,7 @@ public class EntryPointFragment extends Fragment {
         if (context instanceof Activity) {
             mCallbacks = (Callbacks) context;
         }
+
     }
 
     @Override
@@ -69,11 +75,12 @@ public class EntryPointFragment extends Fragment {
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.fragment_entry_point, container, false);
 
+        mEvernoteService = mCallbacks.getEvernoteService();
 
         wireToolbar(v);
-        if (!EvernoteSession.getInstance().isLoggedIn()) {
+        if (!mEvernoteService.isLoggedIn()) {
             Log.i(Utils.LOG_TAG, "Logging in...");
-            EvernoteSession.getInstance().authenticate(getActivity());
+            mEvernoteService.loginToEvernote(getActivity());
         } else {
             Log.i(Utils.LOG_TAG, "Already Logged!");
             Toast.makeText(getActivity(), "LOGIN COMPLETED", Toast.LENGTH_SHORT).show();
