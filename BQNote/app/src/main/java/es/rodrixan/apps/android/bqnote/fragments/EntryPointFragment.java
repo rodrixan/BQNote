@@ -3,17 +3,12 @@ package es.rodrixan.apps.android.bqnote.fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import es.rodrixan.apps.android.bqnote.R;
 import es.rodrixan.apps.android.bqnote.services.EvernoteService;
@@ -35,13 +30,18 @@ public class EntryPointFragment extends Fragment {
         void setToolBar(Toolbar toolbar);
 
         /**
-         * @return evernote service in order to call the methods needed
+         * Gives the login process to parent activity
          */
-        EvernoteService getEvernoteService();
+        void authenticateToEvernote();
+
+        /**
+         * Starts the activity for listing notes
+         */
+        void launchNoteListActivity();
     }
 
     private Callbacks mCallbacks;
-    private EvernoteService mEvernoteService;
+
 
     /**
      * @return new instance of  this fragment
@@ -65,25 +65,19 @@ public class EntryPointFragment extends Fragment {
         mCallbacks = null;
     }
 
-    @Override
-    public void onCreate(@Nullable final Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-    }
 
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.fragment_entry_point, container, false);
 
-        mEvernoteService = mCallbacks.getEvernoteService();
 
         wireToolbar(v);
-        if (!mEvernoteService.isLoggedIn()) {
+        if (!EvernoteService.isLoggedIn()) {
             Log.i(Utils.LOG_TAG, "Logging in...");
-            mEvernoteService.loginToEvernote(getActivity());
+            mCallbacks.authenticateToEvernote();
         } else {
             Log.i(Utils.LOG_TAG, "Already Logged!");
-            Toast.makeText(getActivity(), "LOGIN COMPLETED", Toast.LENGTH_SHORT).show();
+            mCallbacks.launchNoteListActivity();
         }
         return v;
     }
@@ -100,21 +94,5 @@ public class EntryPointFragment extends Fragment {
         return toolbar;
     }
 
-    @Override
-    public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.main, menu);
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(final MenuItem item) {
-
-        switch (item.getItemId()) {
-            case R.id.action_logout:
-                Toast.makeText(getActivity(), "Logout not available yet!", Toast.LENGTH_SHORT).show();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
 }

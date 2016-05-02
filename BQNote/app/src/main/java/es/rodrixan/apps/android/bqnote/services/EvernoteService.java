@@ -2,30 +2,46 @@ package es.rodrixan.apps.android.bqnote.services;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 
 import com.evernote.client.android.EvernoteSession;
 
+import es.rodrixan.apps.android.bqnote.activities.EntryPointActivity;
+
 /**
- * Evernote service interface
+ * EvernoteService
  */
-public interface EvernoteService {
-    /**
-     * Creates a new evernote session
-     *
-     * @param context activity which calls the method
-     * @return instance of evernote session
-     */
-    EvernoteSession createSession(Context context);
+public final class EvernoteService {
+    private static final String CONSUMER_KEY = "rodrixan-5042";
+    private static final String CONSUMER_SECRET = "3caeb6da5a2e5ce5";
+    private static final EvernoteSession.EvernoteService EVERNOTE_SERVICE = EvernoteSession.EvernoteService.SANDBOX;
+    private static final boolean SUPPORT_APP_LINKED_NOTEBOOKS = false;
 
     /**
-     * Attemps to login to Evernote
-     *
-     * @param activity activity which calls the method
+     * Private constructot in order to make the class not instantiable
      */
-    void loginToEvernote(Activity activity);
+    private EvernoteService() {
+    }
 
-    /**
-     * @return true if there is a user logged in, false in other case.
-     */
-    boolean isLoggedIn();
+    public static EvernoteSession createSession(final Context context) {
+        return new EvernoteSession.Builder(context)
+                .setEvernoteService(EVERNOTE_SERVICE)
+                .setSupportAppLinkedNotebooks(SUPPORT_APP_LINKED_NOTEBOOKS)
+                .build(CONSUMER_KEY, CONSUMER_SECRET)
+                .asSingleton();
+    }
+
+
+    public static boolean isLoggedIn() {
+        return EvernoteSession.getInstance().isLoggedIn();
+    }
+
+
+    public static void logoutEvernote(final Activity activity) {
+        EvernoteSession.getInstance().logOut();
+        final Intent i = EntryPointActivity.newIntent(activity);
+        activity.startActivity(i);
+        activity.finish();
+    }
+
 }

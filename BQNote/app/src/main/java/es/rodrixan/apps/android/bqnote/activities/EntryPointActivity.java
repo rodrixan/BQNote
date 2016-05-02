@@ -1,5 +1,7 @@
 package es.rodrixan.apps.android.bqnote.activities;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -8,9 +10,9 @@ import android.widget.Toast;
 import com.evernote.client.android.EvernoteSession;
 import com.evernote.client.android.login.EvernoteLoginFragment;
 
+import es.rodrixan.apps.android.bqnote.R;
 import es.rodrixan.apps.android.bqnote.fragments.EntryPointFragment;
 import es.rodrixan.apps.android.bqnote.services.EvernoteService;
-import es.rodrixan.apps.android.bqnote.services.EvernoteServiceImpl;
 import es.rodrixan.apps.android.bqnote.utilities.Utils;
 
 /**
@@ -18,9 +20,13 @@ import es.rodrixan.apps.android.bqnote.utilities.Utils;
  */
 public class EntryPointActivity extends SingleFragmentActivity implements EntryPointFragment.Callbacks, EvernoteLoginFragment.ResultCallback {
 
-
     private EvernoteSession mEvernoteSession;
-    private final EvernoteService mEvernoteService = new EvernoteServiceImpl();
+
+    public static Intent newIntent(final Context packageContext) {
+        Log.d(Utils.LOG_TAG, "EntryPointActivity new Intent");
+        final Intent i = new Intent(packageContext, EntryPointActivity.class);
+        return i;
+    }
 
     @Override
     protected Fragment createFragment() {
@@ -33,7 +39,7 @@ public class EntryPointActivity extends SingleFragmentActivity implements EntryP
     @Override
     protected void init() {
         Log.i(Utils.LOG_TAG, "Creating Evernote Session");
-        mEvernoteSession = mEvernoteService.createSession(this);
+        mEvernoteSession = EvernoteService.createSession(this);
     }
 
     @Override
@@ -42,17 +48,29 @@ public class EntryPointActivity extends SingleFragmentActivity implements EntryP
     }
 
     @Override
-    public EvernoteService getEvernoteService() {
-        return mEvernoteService;
+    public void authenticateToEvernote() {
+        mEvernoteSession.authenticate(this);
     }
+
+    @Override
+    public void launchNoteListActivity() {
+        Log.i(Utils.LOG_TAG, "Launching NoteList");
+        final Intent i = NoteListActivity.newIntent(this);
+//        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(i);
+        finish();
+    }
+
 
     @Override
     public void onLoginFinished(final boolean successful) {
         if (successful) {
-            Toast.makeText(this, "SUCCESS!!!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.login_ok, Toast.LENGTH_SHORT).show();
             Log.i(Utils.LOG_TAG, "Login Successful");
+            launchNoteListActivity();
         } else {
             Log.i(Utils.LOG_TAG, "Login canceled. Closing app...");
+            Toast.makeText(this, R.string.login_error, Toast.LENGTH_SHORT).show();
             finish();
         }
     }
