@@ -1,4 +1,4 @@
-package es.rodrixan.apps.android.bqnote.activities;
+package es.rodrixan.apps.android.bqnote.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,9 +11,9 @@ import com.evernote.client.android.EvernoteSession;
 import com.evernote.client.android.login.EvernoteLoginFragment;
 
 import es.rodrixan.apps.android.bqnote.R;
-import es.rodrixan.apps.android.bqnote.fragments.EntryPointFragment;
-import es.rodrixan.apps.android.bqnote.services.EvernoteService;
-import es.rodrixan.apps.android.bqnote.utilities.Utils;
+import es.rodrixan.apps.android.bqnote.fragment.EntryPointFragment;
+import es.rodrixan.apps.android.bqnote.util.EvernoteUtils;
+import es.rodrixan.apps.android.bqnote.util.Utils;
 
 /**
  * Entry point of the App. Checks the user login
@@ -39,7 +39,7 @@ public class EntryPointActivity extends SingleFragmentActivity implements EntryP
     @Override
     protected void init() {
         Log.i(Utils.LOG_TAG, "Creating Evernote Session");
-        mEvernoteSession = EvernoteService.createSession(this);
+        mEvernoteSession = EvernoteUtils.createSession(this);
     }
 
     @Override
@@ -56,7 +56,6 @@ public class EntryPointActivity extends SingleFragmentActivity implements EntryP
     public void launchNoteListActivity() {
         Log.i(Utils.LOG_TAG, "Launching NoteList");
         final Intent i = NoteListActivity.newIntent(this);
-//        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(i);
         finish();
     }

@@ -13,10 +13,11 @@ import net.vrallev.android.task.TaskExecutor;
 
 import java.util.concurrent.Executors;
 
-import es.rodrixan.apps.android.bqnote.services.EvernoteService;
+import es.rodrixan.apps.android.bqnote.util.EvernoteUtils;
 
 /**
  * Modified by Rodrigo de Blas for using it on BQNote
+ * https://github.com/evernote/evernote-sdk-android/blob/master/demo/src/main/java/com/evernote/android/demo/task/BaseTask.java
  *
  * @author rwondratschek
  */
@@ -72,7 +73,7 @@ public abstract class BaseTask<RESULT> extends Task<RESULT> {
         if (e instanceof EDAMUserException) {
 
             if (activity != null) {
-                EvernoteService.logoutEvernote(activity);
+                EvernoteUtils.logoutEvernote(activity);
             }
 
         }

@@ -16,4 +16,11 @@
         <item quantity="one">%1$s note</item>
         <item quantity="other">%1$s notes</item>
     </plurals>
+    <string name="hint_note_title">Title</string>
+    <string name="hint_note_desc">Content</string>
+    <string name="dialog_note_title">New Note</string>
+    <string name="dialog_create_note">Create Note</string>
+    <string name="create_note_error">Error while creating the note</string>
+    <string name="create_note_ok">Note created</string>
+    <string name="create_note_empty_fields">Fields can\'t be empty</string>
 </resources>

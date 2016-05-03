@@ -1,4 +1,4 @@
-package es.rodrixan.apps.android.bqnote.activities;
+package es.rodrixan.apps.android.bqnote.activity;
 
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;

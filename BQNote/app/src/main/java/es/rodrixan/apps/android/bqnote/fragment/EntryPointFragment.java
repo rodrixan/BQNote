@@ -1,4 +1,4 @@
-package es.rodrixan.apps.android.bqnote.fragments;
+package es.rodrixan.apps.android.bqnote.fragment;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,14 +11,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import es.rodrixan.apps.android.bqnote.R;
-import es.rodrixan.apps.android.bqnote.services.EvernoteService;
-import es.rodrixan.apps.android.bqnote.utilities.Utils;
+import es.rodrixan.apps.android.bqnote.util.EvernoteUtils;
+import es.rodrixan.apps.android.bqnote.util.Utils;
 
 /**
  * Entry Point of the App. It decides whether or not the user has logged in, and redirect him/her to the next activity
  */
 public class EntryPointFragment extends Fragment {
-
 
     /**
      * Callbacks for the activity to implement
@@ -72,7 +71,7 @@ public class EntryPointFragment extends Fragment {
 
 
         wireToolbar(v);
-        if (!EvernoteService.isLoggedIn()) {
+        if (!EvernoteUtils.isLoggedIn()) {
             Log.i(Utils.LOG_TAG, "Logging in...");
             mCallbacks.authenticateToEvernote();
         } else {
