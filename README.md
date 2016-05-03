@@ -43,6 +43,7 @@ Creada por Rodrigo de Blas
 	+ Android Studio 2.1
 	+ Java JDK 1.8
 	+ Android API 22
+	+ Evernote Android SDK 2.0.0
 
 <a name="def-app"></a>
 
@@ -50,11 +51,12 @@ Creada por Rodrigo de Blas
 
 1. Download repository
 2. Import from Android Studio
+
     ```
     import -> existing Android Studio Project
     ```
-3. Plug a device in and wait for ADB to start, or create a new AVD (Android Virtual Device)
     
+3. Plug a device in and wait for ADB to start, or create a new AVD (Android Virtual Device)
 4. Launch app, choosing the desired device
     
 
