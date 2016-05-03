@@ -14,6 +14,7 @@ import com.evernote.edam.type.Notebook;
 import java.util.List;
 
 /**
+ * Modified by Rodrigo de Blas for fitting BQNote App
  * @author rwondratschek
  */
 public class FindNotesTask extends BaseTask<List<NoteRef>> {
@@ -21,30 +22,20 @@ public class FindNotesTask extends BaseTask<List<NoteRef>> {
     private final EvernoteSearchHelper.Search mSearch;
 
     @SuppressWarnings("unchecked")
-    public FindNotesTask(int offset, int maxNotes, @Nullable Notebook notebook, @Nullable LinkedNotebook linkedNotebook, @Nullable String query) {
+    public FindNotesTask(int offset, int maxNotes, @Nullable NoteFilter noteFilter) {
         super((Class) List.class);
 
-        NoteFilter noteFilter = new NoteFilter();
-        noteFilter.setOrder(NoteSortOrder.UPDATED.getValue());
 
-        if (!TextUtils.isEmpty(query)) {
-            noteFilter.setWords(query);
+        if(noteFilter==null){
+            noteFilter=new NoteFilter();
+            noteFilter.setOrder(NoteSortOrder.UPDATED.getValue());
         }
-
-        if (notebook != null) {
-            noteFilter.setNotebookGuid(notebook.getGuid());
-        }
-
         mSearch = new EvernoteSearchHelper.Search()
                 .setOffset(offset)
                 .setMaxNotes(maxNotes)
                 .setNoteFilter(noteFilter);
 
-        if (linkedNotebook != null) {
-            mSearch.addLinkedNotebook(linkedNotebook);
-        } else {
-            mSearch.addScope(EvernoteSearchHelper.Scope.PERSONAL_NOTES);
-        }
+        mSearch.addScope(EvernoteSearchHelper.Scope.PERSONAL_NOTES);
     }
 
     @Override

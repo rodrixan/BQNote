@@ -3,7 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_logout"
-        android:orderInCategory="100"
+
         android:title="@string/action_logout"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_order_title"
+        android:title="@string/action_order_by_title"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_order_create"
+        android:title="@string/action_order_by_creation"
+        app:showAsAction="never" />
+
 </menu>

@@ -5,6 +5,8 @@
 
 
     <string name="action_logout">Log Out</string>
+    <string name="action_order_by_title">Order by Title</string>
+    <string name="action_order_by_creation">Order by Creation</string>
 
     <string name="login_ok">Login completed</string>
     <string name="login_error">Login error or canceled. Closing app...</string>

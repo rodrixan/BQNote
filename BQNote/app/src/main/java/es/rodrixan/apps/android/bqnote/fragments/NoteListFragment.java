@@ -21,7 +21,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.evernote.client.android.type.NoteRef;
+import com.evernote.edam.notestore.NoteFilter;
 import com.evernote.edam.type.LinkedNotebook;
+import com.evernote.edam.type.NoteSortOrder;
 import com.evernote.edam.type.Notebook;
 
 import net.vrallev.android.task.TaskResult;
@@ -38,8 +40,10 @@ import es.rodrixan.apps.android.bqnote.utilities.Utils;
 public class NoteListFragment extends Fragment {
     private static final int REQUEST_NOTE = 1;
     private static final String SAVED_SUBTITLE_SHOWN = "subtitle";
+    private static final String SAVED_FILTER = "filter";
 
-    private static final int MAX_NOTES = 2;
+
+    private static final int MAX_NOTES = 20;
 
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -52,9 +56,8 @@ public class NoteListFragment extends Fragment {
 
     private boolean mShowSubtitle = true;
     private Callbacks mCallbacks;
-    private final Notebook mNotebook = null;
-    private final LinkedNotebook mLinkedNotebook = null;
-    private final String mQuery = null;
+
+    private NoteFilter mNoteFilter=null;
 
     public interface Callbacks {
         /**
@@ -148,6 +151,7 @@ public class NoteListFragment extends Fragment {
     private void restoreData(final Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             mShowSubtitle = savedInstanceState.getBoolean(SAVED_SUBTITLE_SHOWN);
+            mNoteFilter = (NoteFilter)savedInstanceState.getSerializable(SAVED_FILTER);
         }
         mNoteRefList = new ArrayList<>();
     }
@@ -201,8 +205,7 @@ public class NoteListFragment extends Fragment {
 
     private void loadData() {
         Log.i(Utils.LOG_TAG, "Loading notes");
-        new FindNotesTask(0, mLastOffset, mNotebook, mLinkedNotebook, mQuery).start(this);
-
+        new FindNotesTask(0, mLastOffset, mNoteFilter).start(this);
         mLastOffset += MAX_NOTES;
     }
 
@@ -229,6 +232,7 @@ public class NoteListFragment extends Fragment {
     public void onSaveInstanceState(final Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(SAVED_SUBTITLE_SHOWN, mShowSubtitle);
+        outState.putSerializable(SAVED_FILTER,mNoteFilter);
     }
 
     @Override
@@ -269,9 +273,25 @@ public class NoteListFragment extends Fragment {
                 Log.i(Utils.LOG_TAG, "Logout from evernote");
                 EvernoteService.logoutEvernote(getActivity());
                 return true;
+            case R.id.action_order_create:
+                createNoteFilterSort(NoteSortOrder.CREATED,false);
+                Log.i(Utils.LOG_TAG,"Sorting by modification");
+                loadData();
+                return true;
+            case R.id.action_order_title:
+                createNoteFilterSort(NoteSortOrder.TITLE,true);
+                Log.i(Utils.LOG_TAG, "Sorting by title");
+                loadData();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void createNoteFilterSort(NoteSortOrder order,boolean ascending){
+        mNoteFilter=new NoteFilter();
+        mNoteFilter.setOrder(order.getValue());
+        mNoteFilter.setAscending(ascending);
     }
 
     //ViewHolder for notes
@@ -296,7 +316,6 @@ public class NoteListFragment extends Fragment {
 
         public void bindNoteRef(final NoteRef noteRef) {
             mNoteRef = noteRef;
-            Log.d(Utils.LOG_TAG, "Setting textview " + noteRef.getTitle());
             mTitleTextView.setText(noteRef.getTitle());
         }
 
@@ -327,7 +346,6 @@ public class NoteListFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(final NoteHolder holder, final int position) {
-            Log.d(Utils.LOG_TAG, "Position " + position);
             holder.bindNoteRef(mNoteRefList.get(position));
         }
 
