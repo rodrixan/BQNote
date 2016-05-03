@@ -31,7 +31,7 @@ Creada por Rodrigo de Blas
 
 <a name="def-ide"></a>
 
-## Entorno
+## Workspace
 + Hardware
 
 	+ Intel i7 3.1GHz 8GB RAM (Windows 10 64b)
