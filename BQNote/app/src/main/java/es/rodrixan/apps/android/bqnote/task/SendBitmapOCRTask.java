@@ -24,6 +24,7 @@ import es.rodrixan.apps.android.bqnote.util.Utils;
 
 /**
  * Sends a bitmap to the OCR server, retrieving a text
+ * https://ocr.space/OCRAPI
  */
 public class SendBitmapOCRTask extends BaseTask<String> {
     private static final String OCR_API_URL = "https://api.ocr.space/parse/image";
