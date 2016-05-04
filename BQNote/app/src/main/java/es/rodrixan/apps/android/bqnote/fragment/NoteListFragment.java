@@ -164,7 +164,7 @@ public class NoteListFragment extends Fragment {
     }
 
     /**
-     * Set up of the RecyclerView
+     * Setup of the RecyclerView
      *
      * @param v root view
      */
@@ -176,6 +176,11 @@ public class NoteListFragment extends Fragment {
         mRecyclerView.setLayoutManager(layoutManager);
     }
 
+    /**
+     * Set up of the floating button
+     *
+     * @param v root view
+     */
     private void wireFloatingButton(final View v) {
         final FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -186,10 +191,18 @@ public class NoteListFragment extends Fragment {
         });
     }
 
+    /**
+     * Setup of the coordinatorLayout
+     *
+     * @param v root view
+     */
     private void wireCoordinatorLayout(final View v) {
         mCoordinatorLayout = (CoordinatorLayout) v.findViewById(R.id.coordinator_layout);
     }
 
+    /**
+     * Launches the new note dialog
+     */
     private void launchNewNoteDialog() {
         final FragmentManager manager = getActivity().getSupportFragmentManager();
         final NewNoteDialogFragment dialog = NewNoteDialogFragment.newInstance();
@@ -455,37 +468,48 @@ public class NoteListFragment extends Fragment {
     @Override
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         if (resultCode != Activity.RESULT_OK) {
-            if (resultCode == Activity.RESULT_CANCELED && requestCode == REQUEST_HANDWRITTEN_NOTE) {
-                Log.d(Utils.LOG_TAG, "Back from handwriting: canceled");
-            }
             return;
         }
+
         if (requestCode == REQUEST_NEW_NOTE) {
-            final String title = NewNoteDialogFragment.getNoteTitleFromIntentExtra(data);
-            final String content = NewNoteDialogFragment.getNoteContentFromIntentExtra(data);
+
             final boolean requestHandwriting = NewNoteDialogFragment.getCreateHandwritingFromIntentExtra(data);
             if (requestHandwriting) {
                 Log.d(Utils.LOG_TAG, "Starting handwriting activity");
                 startHandwriteNoteActivity();
                 return;
-            } else if (title == null || content == null) {
+            }
+
+            final String title = NewNoteDialogFragment.getNoteTitleFromIntentExtra(data);
+            final String content = NewNoteDialogFragment.getNoteContentFromIntentExtra(data);
+            if (title == null || content == null) {
                 Log.d(Utils.LOG_TAG, "Empty fields on new note");
                 Snackbar.make(mCoordinatorLayout, R.string.create_note_empty_fields, Snackbar.LENGTH_SHORT).show();
                 return;
             }
+
             Snackbar.make(mCoordinatorLayout, R.string.create_note_ok, Snackbar.LENGTH_SHORT).show();
             createNote(title, content);
+            
+        } else if (requestCode == REQUEST_HANDWRITTEN_NOTE) {
+            sendBitMapOCR(data);
         }
-        if (requestCode == REQUEST_HANDWRITTEN_NOTE) {
-            mHandwritingNoteTitle = HandwritingNoteFragment.getNoteTitleFromIntentExtra(data);
-            final Bitmap bitmap = HandwritingNoteFragment.getBitmapFromIntentExtra(data);
-            if (mHandwritingNoteTitle == null || bitmap == null || mHandwritingNoteTitle.isEmpty()) {
-                Log.d(Utils.LOG_TAG, "Empty fields on handwritten note");
-                Snackbar.make(mCoordinatorLayout, R.string.create_note_empty_fields, Snackbar.LENGTH_SHORT).show();
-                return;
-            }
-            new SendBitmapOCRTask(bitmap, getActivity()).start(this);
+    }
+
+    /**
+     * Starts a new task for sending the bitmap to the OCR server
+     *
+     * @param data intent where the data come from
+     */
+    private void sendBitMapOCR(final Intent data) {
+        mHandwritingNoteTitle = HandwritingNoteFragment.getNoteTitleFromIntentExtra(data);
+        final Bitmap bitmap = HandwritingNoteFragment.getBitmapFromIntentExtra(data);
+        if (mHandwritingNoteTitle == null || bitmap == null || mHandwritingNoteTitle.isEmpty()) {
+            Log.d(Utils.LOG_TAG, "Empty fields on handwritten note");
+            Snackbar.make(mCoordinatorLayout, R.string.create_note_empty_fields, Snackbar.LENGTH_SHORT).show();
+            return;
         }
+        new SendBitmapOCRTask(bitmap, getActivity()).start(this);
     }
 
     /**

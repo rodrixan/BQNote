@@ -37,26 +37,46 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
         android:orientation="horizontal"
-        android:gravity="end"
         android:padding="10dp">
 
-        <Button
-            style="@android:style/Holo.ButtonBar.AlertDialog"
-            android:id="@+id/handwriting_note_button_cancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/material_deep_teal_500"
-            android:text="@string/dialog_cancel_note" />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:gravity="start">
 
-        <Button
-            style="@android:style/Holo.Light.ButtonBar.AlertDialog"
-            android:id="@+id/handwriting_note_button_save"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/dialog_create_note"
-            android:textColor="@color/material_deep_teal_500" />
+            <Button
+                style="@android:style/Holo.ButtonBar.AlertDialog"
+                android:id="@+id/handwriting_note_button_clear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/material_deep_teal_500"
+                android:text="@string/create_note_handwriting_clear" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="match_parent"
+            android:gravity="end">
+
+            <Button
+                style="@android:style/Holo.ButtonBar.AlertDialog"
+                android:id="@+id/handwriting_note_button_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/material_deep_teal_500"
+                android:text="@string/dialog_cancel_note" />
+
+            <Button
+                style="@android:style/Holo.Light.ButtonBar.AlertDialog"
+                android:id="@+id/handwriting_note_button_save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/dialog_create_note"
+                android:textColor="@color/material_deep_teal_500" />
+        </LinearLayout>
 
     </LinearLayout>
 

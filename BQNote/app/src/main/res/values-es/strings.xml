@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">BQNote</string>
+    <string name="action_logout">Cerrar Sesión</string>
+    <string name="action_order_by_creation">Ordenar por creación</string>
+    <string name="action_order_by_title">Ordenar por título</string>
+    <string name="create_note_empty_fields">Los campos no pueden estar vacíos</string>
+    <string name="create_note_error">Error al crear la nota</string>
+    <string name="create_note_handwriting">Esc. a mano</string>
+    <string name="create_note_handwriting_cancel">Reconocimiento de escritura cancelado</string>
+    <string name="create_note_handwriting_hint">Dibuja aquí tu nota</string>
+    <string name="create_note_ok">Nota creada</string>
+    <string name="dialog_cancel_note">Cancelar</string>
+    <string name="dialog_create_note">Crear Nota</string>
+    <string name="dialog_note_title">Nueva Nota</string>
+    <string name="entry_point_desc">Redirigiendo a Evernote</string>
+    <string name="handwriting_activity_title">Nota a mano</string>
+    <string name="hint_note_desc">Contenido</string>
+    <string name="hint_note_title">Título</string>
+    <string name="login_error">Inicio de sesión erróneo/cancelado</string>
+    <string name="login_ok">Sesión iniciada</string>
+    <string name="no_more_notes">No se encontraron más notas</string>
+    <string name="no_notes">No hay más notas</string>
+    <string name="create_note_handwriting_clear">Borrar</string>
+    <plurals name="subtitle_plurals">
+        <item quantity="one">%1$s nota</item>
+        <item quantity="other">%1$s notas</item>
+    </plurals>
+</resources>

@@ -31,12 +31,6 @@ public class HandwritingNoteFragment extends Fragment {
     private static final String EXTRA_TITLE = "title";
     private static final String EXTRA_BITMAP = "bitmap";
 
-
-    private HandwritingView mHandwritingView;
-    private Button mCancelButton;
-    private Button mSaveButton;
-    private AutoCompleteTextView mTitleEditText;
-
     /**
      * Callbacks for the activity to implement
      */
@@ -49,6 +43,13 @@ public class HandwritingNoteFragment extends Fragment {
     }
 
     private Callbacks mCallbacks;
+
+    private HandwritingView mHandwritingView;
+    private Button mCancelButton;
+    private Button mSaveButton;
+    private Button mClearButton;
+    private AutoCompleteTextView mTitleEditText;
+
 
     @Override
     public void onAttach(final Context context) {
@@ -93,6 +94,7 @@ public class HandwritingNoteFragment extends Fragment {
         mHandwritingView = (HandwritingView) v.findViewById(R.id.handwriting_note_view);
         mCancelButton = (Button) v.findViewById(R.id.handwriting_note_button_cancel);
         mSaveButton = (Button) v.findViewById(R.id.handwriting_note_button_save);
+        mClearButton = (Button) v.findViewById(R.id.handwriting_note_button_clear);
         mTitleEditText = (AutoCompleteTextView) v.findViewById(R.id.handwriting_note_title);
     }
 
@@ -125,6 +127,13 @@ public class HandwritingNoteFragment extends Fragment {
                 Log.i(Utils.LOG_TAG, "Saving image text");
                 Toast.makeText(getActivity(), "Saving...", Toast.LENGTH_SHORT).show();
                 sendDataToParentActivity();
+            }
+        });
+
+        mClearButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                mHandwritingView.clear();
             }
         });
     }

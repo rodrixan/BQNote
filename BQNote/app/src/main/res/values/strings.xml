@@ -1,23 +1,14 @@
 <resources>
     <string name="app_name">BQNote</string>
     <string name="handwriting_activity_title">Handwriting Note</string>
-
     <string name="entry_point_desc">Redirecting to Evernote...</string>
-    <string name="title_activity_main">MainActivity</string>
-
-
     <string name="action_logout">Log Out</string>
     <string name="action_order_by_title">Order by Title</string>
     <string name="action_order_by_creation">Order by Creation</string>
-
     <string name="login_ok">Login completed</string>
     <string name="login_error">Login error or canceled. Closing app...</string>
     <string name="no_notes">No notes yet...</string>
     <string name="no_more_notes">No more notes found</string>
-    <plurals name="subtitle_plurals">
-        <item quantity="one">%1$s note</item>
-        <item quantity="other">%1$s notes</item>
-    </plurals>
     <string name="hint_note_title">Title</string>
     <string name="hint_note_desc">Content</string>
     <string name="dialog_note_title">New Note</string>
@@ -29,4 +20,9 @@
     <string name="create_note_handwriting">Handwriting</string>
     <string name="create_note_handwriting_cancel">Handwriting note creation cancelled</string>
     <string name="create_note_handwriting_hint">Draw your note text here</string>
+    <string name="create_note_handwriting_clear">Clear</string>
+    <plurals name="subtitle_plurals">
+        <item quantity="one">%1$s note</item>
+        <item quantity="other">%1$s notes</item>
+    </plurals>
 </resources>
