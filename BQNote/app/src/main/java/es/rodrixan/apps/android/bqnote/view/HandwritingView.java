@@ -35,7 +35,8 @@ public class HandwritingView extends View {
 
     public HandwritingView(final Context context, final AttributeSet attrs, final int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-
+        setDrawingCacheBackgroundColor(Color.WHITE);
+        setDrawingCacheEnabled(true);
         mPath = new Path();
         mBitmapPaint = new Paint(Paint.DITHER_FLAG);
 
@@ -116,6 +117,10 @@ public class HandwritingView extends View {
         mBitmap.eraseColor(Color.TRANSPARENT);
         invalidate();
         System.gc();
+    }
+
+    public Bitmap getBitmap() {
+        return getDrawingCache();
     }
 }
 

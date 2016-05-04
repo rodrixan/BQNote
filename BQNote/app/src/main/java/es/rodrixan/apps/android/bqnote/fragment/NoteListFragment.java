@@ -3,6 +3,7 @@ package es.rodrixan.apps.android.bqnote.fragment;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -38,6 +39,7 @@ import es.rodrixan.apps.android.bqnote.activity.HandwritingNoteActivity;
 import es.rodrixan.apps.android.bqnote.task.CreateNewNoteTask;
 import es.rodrixan.apps.android.bqnote.task.FindNotesTask;
 import es.rodrixan.apps.android.bqnote.task.GetNoteHtmlTask;
+import es.rodrixan.apps.android.bqnote.task.SendBitmapOCRTask;
 import es.rodrixan.apps.android.bqnote.util.EvernoteUtils;
 import es.rodrixan.apps.android.bqnote.util.Utils;
 
@@ -67,6 +69,8 @@ public class NoteListFragment extends Fragment {
     private Callbacks mCallbacks;
 
     private NoteFilter mNoteFilter = null;
+
+    private String mHandwritingNoteTitle;
 
 
     /**
@@ -452,13 +456,11 @@ public class NoteListFragment extends Fragment {
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         if (resultCode != Activity.RESULT_OK) {
             if (resultCode == Activity.RESULT_CANCELED && requestCode == REQUEST_HANDWRITTEN_NOTE) {
-                Log.d(Utils.LOG_TAG, "Back from handwriting");
-                Snackbar.make(mCoordinatorLayout, R.string.create_note_handwriting_cancel, Snackbar.LENGTH_SHORT).show();
+                Log.d(Utils.LOG_TAG, "Back from handwriting: canceled");
             }
             return;
         }
         if (requestCode == REQUEST_NEW_NOTE) {
-
             final String title = NewNoteDialogFragment.getNoteTitleFromIntentExtra(data);
             final String content = NewNoteDialogFragment.getNoteContentFromIntentExtra(data);
             final boolean requestHandwriting = NewNoteDialogFragment.getCreateHandwritingFromIntentExtra(data);
@@ -475,7 +477,14 @@ public class NoteListFragment extends Fragment {
             createNote(title, content);
         }
         if (requestCode == REQUEST_HANDWRITTEN_NOTE) {
-            //call the task
+            mHandwritingNoteTitle = HandwritingNoteFragment.getNoteTitleFromIntentExtra(data);
+            final Bitmap bitmap = HandwritingNoteFragment.getBitmapFromIntentExtra(data);
+            if (mHandwritingNoteTitle == null || bitmap == null || mHandwritingNoteTitle.isEmpty()) {
+                Log.d(Utils.LOG_TAG, "Empty fields on handwritten note");
+                Snackbar.make(mCoordinatorLayout, R.string.create_note_empty_fields, Snackbar.LENGTH_SHORT).show();
+                return;
+            }
+            new SendBitmapOCRTask(bitmap, getActivity()).start(this);
         }
     }
 
@@ -483,7 +492,7 @@ public class NoteListFragment extends Fragment {
      * Launches the activity for creating a handwritten note
      */
     private void startHandwriteNoteActivity() {
-        Log.d(Utils.LOG_TAG, "launching HandwriteNote Activity");
+        Log.d(Utils.LOG_TAG, "launching HandwritingNote Activity");
         updateUI();
         final Intent i = HandwritingNoteActivity.newIntent(getActivity());
         startActivityForResult(i, REQUEST_HANDWRITTEN_NOTE);
@@ -507,6 +516,15 @@ public class NoteListFragment extends Fragment {
         } else {
             Snackbar.make(mCoordinatorLayout, R.string.create_note_error, Snackbar.LENGTH_SHORT).show();
         }
+    }
+
+
+    @TaskResult
+    public void onReceivedText(final String imgText) {
+        if (imgText == null || imgText.isEmpty()) {
+            Snackbar.make(mCoordinatorLayout, R.string.create_note_empty_fields, Snackbar.LENGTH_SHORT).show();
+        }
+        createNote(mHandwritingNoteTitle, imgText);
     }
 
     /**

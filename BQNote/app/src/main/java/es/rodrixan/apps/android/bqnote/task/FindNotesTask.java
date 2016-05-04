@@ -1,5 +1,6 @@
 package es.rodrixan.apps.android.bqnote.task;
 
+import android.net.Uri;
 import android.support.annotation.Nullable;
 
 import com.evernote.client.android.EvernoteSession;
@@ -19,6 +20,7 @@ import java.util.List;
  * @author rwondratschek
  */
 public class FindNotesTask extends BaseTask<List<NoteRef>> {
+
 
     private final EvernoteSearchHelper.Search mSearch;
 
