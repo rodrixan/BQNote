@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">BQNote</string>
+    <string name="handwriting_activity_title">Handwriting Note</string>
+
     <string name="entry_point_desc">Redirecting to Evernote...</string>
     <string name="title_activity_main">MainActivity</string>
 
@@ -20,7 +22,11 @@
     <string name="hint_note_desc">Content</string>
     <string name="dialog_note_title">New Note</string>
     <string name="dialog_create_note">Create Note</string>
+    <string name="dialog_cancel_note">Cancel</string>
     <string name="create_note_error">Error while creating the note</string>
     <string name="create_note_ok">Note created</string>
     <string name="create_note_empty_fields">Fields can\'t be empty</string>
+    <string name="create_note_handwriting">Handwriting</string>
+    <string name="create_note_handwriting_cancel">Handwriting note creation cancelled</string>
+    <string name="create_note_handwriting_hint">Draw your note text here</string>
 </resources>

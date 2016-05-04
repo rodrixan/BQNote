@@ -29,6 +29,13 @@
             android:parentActivityName=".activity.NoteListActivity"
             android:theme="@style/AppTheme">
         </activity>
+        <activity
+            android:name=".activity.HandwritingNoteActivity"
+            android:label="@string/handwriting_activity_title"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".activity.NoteListActivity">
+        </activity>
     </application>
 
 </manifest>

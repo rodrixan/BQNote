@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import es.rodrixan.apps.android.bqnote.R;
+import es.rodrixan.apps.android.bqnote.activity.HandwritingNoteActivity;
 import es.rodrixan.apps.android.bqnote.task.CreateNewNoteTask;
 import es.rodrixan.apps.android.bqnote.task.FindNotesTask;
 import es.rodrixan.apps.android.bqnote.task.GetNoteHtmlTask;
@@ -49,6 +50,7 @@ public class NoteListFragment extends Fragment {
     private static final String SAVED_FILTER = "filter";
     private static final String DIALOG_NEW_NOTE = "dialog new note";
     private static final int REQUEST_NEW_NOTE = 0;
+    private static final int REQUEST_HANDWRITTEN_NOTE = 1;
 
     private static final int MAX_NOTES = 20;
 
@@ -449,12 +451,22 @@ public class NoteListFragment extends Fragment {
     @Override
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         if (resultCode != Activity.RESULT_OK) {
+            if (resultCode == Activity.RESULT_CANCELED && requestCode == REQUEST_HANDWRITTEN_NOTE) {
+                Log.d(Utils.LOG_TAG, "Back from handwriting");
+                Snackbar.make(mCoordinatorLayout, R.string.create_note_handwriting_cancel, Snackbar.LENGTH_SHORT).show();
+            }
             return;
         }
         if (requestCode == REQUEST_NEW_NOTE) {
-            final String title = NewNoteDialogFragment.getTitleFromIntent(data);
-            final String content = NewNoteDialogFragment.getContentFromIntent(data);
-            if (title == null || content == null) {
+
+            final String title = NewNoteDialogFragment.getNoteTitleFromIntentExtra(data);
+            final String content = NewNoteDialogFragment.getNoteContentFromIntentExtra(data);
+            final boolean requestHandwriting = NewNoteDialogFragment.getCreateHandwritingFromIntentExtra(data);
+            if (requestHandwriting) {
+                Log.d(Utils.LOG_TAG, "Starting handwriting activity");
+                startHandwriteNoteActivity();
+                return;
+            } else if (title == null || content == null) {
                 Log.d(Utils.LOG_TAG, "Empty fields on new note");
                 Snackbar.make(mCoordinatorLayout, R.string.create_note_empty_fields, Snackbar.LENGTH_SHORT).show();
                 return;
@@ -462,6 +474,19 @@ public class NoteListFragment extends Fragment {
             Snackbar.make(mCoordinatorLayout, R.string.create_note_ok, Snackbar.LENGTH_SHORT).show();
             createNote(title, content);
         }
+        if (requestCode == REQUEST_HANDWRITTEN_NOTE) {
+            //call the task
+        }
+    }
+
+    /**
+     * Launches the activity for creating a handwritten note
+     */
+    private void startHandwriteNoteActivity() {
+        Log.d(Utils.LOG_TAG, "launching HandwriteNote Activity");
+        updateUI();
+        final Intent i = HandwritingNoteActivity.newIntent(getActivity());
+        startActivityForResult(i, REQUEST_HANDWRITTEN_NOTE);
     }
 
     /**
