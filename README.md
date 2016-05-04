@@ -27,7 +27,8 @@ Features included:
 + View Note: HTML view of a Note (in order to be able to see its resources properly).
 + Add Note: Creates a new note with title and content. **At this moment it only allows plain text**.
 
-Creada por Rodrigo de Blas
+Developed by Rodrigo de Blas
+
 
 <a name="def-ide"></a>
 
@@ -64,6 +65,8 @@ Creada por Rodrigo de Blas
 
 ## Login
 
+![login_img][login]
+
 First time the app is launched, it will redirect to Evernote Authentication Screen. Just insert your email and password to link the app, and allow it to access your data.
 
 Any time you want to log out, select the option in the right-top corner dropdown menu. The app will redirect to the Evernote Authentication Screen.
@@ -71,7 +74,7 @@ Any time you want to log out, select the option in the right-top corner dropdown
 <a name="def-list"></a>
 
 ## Note List
-
+![list_img][list]
 Main activity of the app. It lists all the notes the user has in his/her default notebook.
 By default the notes are sorted by modifications, but they can be sorted by title too. Just select the option in the dropdown menu (as same as logout).
 
@@ -87,10 +90,19 @@ To go back, press the top-left arrow or touch the _back button_ of the device.
 <a name="def-add"></a>
 
 ## Add Note
-
+![add_img][add]
 In the main activity there is a floating button which function is to create a new note. When pressed, it will create a dialog where the user can write the title and the content of a note. 
 Once the fields are filled, the user can save the note, adding it to the note list and his/her account on Evernote.
 
-**note**: _currently, the content of the note can only be plain text_
+User can choose between plain text inputor handwriting input, as shown below:
 
+![add_hand_img][handwriting]
 
+**note: this is not 100% functional yet**
+
+_all the screenshots where taken in spanish version_
+
+[login]: https://github.com/rodrixan/BQNote/blob/master/screenshots/login.png 
+[list]: https://github.com/rodrixan/BQNote/blob/master/screenshots/note_list.png 
+[add]: https://github.com/rodrixan/BQNote/blob/master/screenshots/new_note_text.png 
+[handwriting]: https://github.com/rodrixan/BQNote/blob/master/screenshots/new_note_handwriting.png 
