@@ -12,13 +12,12 @@ import es.rodrixan.apps.android.bqnote.fragment.HandwritingNoteFragment;
 import es.rodrixan.apps.android.bqnote.util.Utils;
 
 /**
- * Created by jutna on 04/05/2016.
+ * Creates a handwriting note, and saves it as a Bitmap
  */
 public class HandwritingNoteActivity extends SingleFragmentActivity implements HandwritingNoteFragment.Callbacks {
     @Override
     protected Fragment createFragment() {
-        Log.d(Utils.LOG_TAG, "CreateFragment: Handwriting");
-        return new HandwritingNoteFragment();
+        return HandwritingNoteFragment.newInstance();
     }
 
     @Override
@@ -33,7 +32,6 @@ public class HandwritingNoteActivity extends SingleFragmentActivity implements H
      * @return intent of the activity
      */
     public static Intent newIntent(final Context packageContext) {
-        Log.d(Utils.LOG_TAG, "HandwritingNoteActivity new Intent");
         final Intent i = new Intent(packageContext, HandwritingNoteActivity.class);
         return i;
     }
@@ -50,7 +48,7 @@ public class HandwritingNoteActivity extends SingleFragmentActivity implements H
         switch (item.getItemId()) {
             // Respond to the action bar's Up/Home button
             case android.R.id.home:
-                Log.d(Utils.LOG_TAG, "Going back from Handwriting nav icon");
+                Log.d(this.getClass().getName(), "Going back from Handwriting nav icon");
                 onBackPressed();
                 return true;
         }

@@ -23,7 +23,6 @@ public class EntryPointActivity extends SingleFragmentActivity implements EntryP
     private EvernoteSession mEvernoteSession;
 
     public static Intent newIntent(final Context packageContext) {
-        Log.d(Utils.LOG_TAG, "EntryPointActivity new Intent");
         final Intent i = new Intent(packageContext, EntryPointActivity.class);
         return i;
     }
@@ -38,7 +37,7 @@ public class EntryPointActivity extends SingleFragmentActivity implements EntryP
      */
     @Override
     protected void init() {
-        Log.i(Utils.LOG_TAG, "Creating Evernote Session");
+        Log.i(this.getClass().getName(), "Creating Evernote Session");
         mEvernoteSession = EvernoteUtils.createSession(this);
     }
 
@@ -54,21 +53,20 @@ public class EntryPointActivity extends SingleFragmentActivity implements EntryP
 
     @Override
     public void launchNoteListActivity() {
-        Log.i(Utils.LOG_TAG, "Launching NoteList");
+        Log.i(this.getClass().getName(), "Launching NoteList");
         final Intent i = NoteListActivity.newIntent(this);
         startActivity(i);
         finish();
     }
 
-
     @Override
     public void onLoginFinished(final boolean successful) {
         if (successful) {
             Toast.makeText(this, R.string.login_ok, Toast.LENGTH_SHORT).show();
-            Log.i(Utils.LOG_TAG, "Login Successful");
+            Log.i(this.getClass().getName(), "Login Successful");
             launchNoteListActivity();
         } else {
-            Log.i(Utils.LOG_TAG, "Login canceled. Closing app...");
+            Log.i(this.getClass().getName(), "Login canceled. Closing app...");
             Toast.makeText(this, R.string.login_error, Toast.LENGTH_SHORT).show();
             finish();
         }

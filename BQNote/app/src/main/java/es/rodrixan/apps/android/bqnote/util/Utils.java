@@ -14,9 +14,6 @@ import java.io.IOException;
  * Static class for Utilities
  */
 public final class Utils {
-
-    public static final String LOG_TAG = "APP_BQNOTE";
-
     private Utils() {
     }
 
@@ -45,7 +42,7 @@ public final class Utils {
                     }
 
                 } catch (final Exception e) {
-                    Log.e(Utils.LOG_TAG, "Error while displaying web content: " + e.getMessage());
+                    Log.e("Utils", "Error while displaying web content: " + e.getMessage());
                 }
 
                 return super.shouldInterceptRequest(view, url);
@@ -72,5 +69,6 @@ public final class Utils {
         final String charset = response.header("charset");
         return new WebResourceResponse(mimeType, charset, response.body().byteStream());
     }
+
 
 }

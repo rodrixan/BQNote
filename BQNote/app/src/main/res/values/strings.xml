@@ -21,6 +21,9 @@
     <string name="create_note_handwriting_cancel">Handwriting note creation cancelled</string>
     <string name="create_note_handwriting_hint">Draw your note text here</string>
     <string name="create_note_handwriting_clear">Clear</string>
+    <string name="saving_note">Saving note...</string>
+    <string name="deleted_note_ok">Note deleted</string>
+    <string name="deleted_note_error">Error while deleting note</string>
     <plurals name="subtitle_plurals">
         <item quantity="one">%1$s note</item>
         <item quantity="other">%1$s notes</item>

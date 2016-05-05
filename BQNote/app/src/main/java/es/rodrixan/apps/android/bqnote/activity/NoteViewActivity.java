@@ -35,7 +35,6 @@ public class NoteViewActivity extends AppCompatActivity {
      * @return intent with extra data
      */
     public static Intent newIntent(final Context packageContext, final NoteRef noteRef, final String html) {
-        Log.d(Utils.LOG_TAG, "NoteViewActivity new intent");
         final Intent i = new Intent(packageContext, NoteViewActivity.class);
         i.putExtra(EXTRA_HTML, html);
         i.putExtra(EXTRA_NOTEREF, noteRef);
@@ -55,7 +54,9 @@ public class NoteViewActivity extends AppCompatActivity {
         Utils.setWebViewNoteContent(mWebView, mHtmlString, mNoteRef);
     }
 
-
+    /**
+     * Matches the layout components to the local fields
+     */
     private void wireComponents() {
 
         setTitle(mNoteRef.getTitle());

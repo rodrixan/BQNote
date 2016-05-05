@@ -74,6 +74,7 @@ public class NewNoteDialogFragment extends DialogFragment {
                     public void onClick(final DialogInterface dialog, final int which) {
                         final String title = mTitle.getText().toString();
                         final String content = mContent.getText().toString();
+                        Log.i(this.getClass().getName(), "Note creation requested");
                         if (title != null && content != null && !title.isEmpty() && !content.isEmpty()) {
                             sendResult(Activity.RESULT_OK, title, content, false);
                         } else {
@@ -84,13 +85,14 @@ public class NewNoteDialogFragment extends DialogFragment {
                 .setNegativeButton(R.string.dialog_cancel_note, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(final DialogInterface dialog, final int which) {
-                        Log.i(Utils.LOG_TAG, "Note creation canceled");
+                        Log.i(this.getClass().getName(), "Note creation canceled");
                         dialog.cancel();
                     }
                 })
                 .setNeutralButton(R.string.create_note_handwriting, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(final DialogInterface dialog, final int which) {
+                        Log.i(this.getClass().getName(), "Note handwriting requested");
                         sendResult(Activity.RESULT_OK, null, null, true);
                     }
                 })

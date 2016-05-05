@@ -15,7 +15,7 @@ import es.rodrixan.apps.android.bqnote.util.EvernoteUtils;
 import es.rodrixan.apps.android.bqnote.util.Utils;
 
 /**
- * Entry Point of the App. It decides whether or not the user has logged in, and redirect him/her to the next activity
+ * Entry Point of the App. It decides whether the user has logged in or not, and redirect him to the list of notes
  */
 public class EntryPointFragment extends Fragment {
 
@@ -72,10 +72,10 @@ public class EntryPointFragment extends Fragment {
 
         wireToolbar(v);
         if (!EvernoteUtils.isLoggedIn()) {
-            Log.i(Utils.LOG_TAG, "Logging in...");
+            Log.i(this.getClass().getName(), "Logging in...");
             mCallbacks.authenticateToEvernote();
         } else {
-            Log.i(Utils.LOG_TAG, "Already Logged!");
+            Log.i(this.getClass().getName(), "Already Logged!");
             mCallbacks.launchNoteListActivity();
         }
         return v;

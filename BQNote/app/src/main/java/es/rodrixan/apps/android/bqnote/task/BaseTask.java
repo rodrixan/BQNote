@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 
 import com.evernote.client.android.helper.Cat;
 import com.evernote.edam.error.EDAMUserException;
@@ -14,6 +15,7 @@ import net.vrallev.android.task.TaskExecutor;
 import java.util.concurrent.Executors;
 
 import es.rodrixan.apps.android.bqnote.util.EvernoteUtils;
+import es.rodrixan.apps.android.bqnote.util.Utils;
 
 /**
  * Modified by Rodrigo de Blas for using it on BQNote
@@ -71,7 +73,7 @@ public abstract class BaseTask<RESULT> extends Task<RESULT> {
 
     protected static void checkException(@NonNull final Exception e, @Nullable final Activity activity) {
         if (e instanceof EDAMUserException) {
-
+            Log.wtf("BaseTask", "Error from Evernote, logging out");
             if (activity != null) {
                 EvernoteUtils.logoutEvernote(activity);
             }

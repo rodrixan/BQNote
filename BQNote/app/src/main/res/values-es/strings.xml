@@ -26,4 +26,7 @@
         <item quantity="one">%1$s nota</item>
         <item quantity="other">%1$s notas</item>
     </plurals>
+    <string name="deleted_note_error">Error al borrar nota</string>
+    <string name="deleted_note_ok">Nota borrada</string>
+    <string name="saving_note">Guardando nota...</string>
 </resources>

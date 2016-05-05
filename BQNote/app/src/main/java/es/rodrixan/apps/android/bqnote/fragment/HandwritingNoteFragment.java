@@ -50,6 +50,12 @@ public class HandwritingNoteFragment extends Fragment {
     private Button mClearButton;
     private AutoCompleteTextView mTitleEditText;
 
+    /**
+     * @return new instance of  this fragment
+     */
+    public static Fragment newInstance() {
+        return new HandwritingNoteFragment();
+    }
 
     @Override
     public void onAttach(final Context context) {
@@ -75,7 +81,6 @@ public class HandwritingNoteFragment extends Fragment {
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_handwriting_note, container, false);
 
-        Log.d(Utils.LOG_TAG, "HandwritingNoteFragment view created");
         wireComponents(view);
         setListeners();
 
@@ -117,6 +122,7 @@ public class HandwritingNoteFragment extends Fragment {
         mCancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
+                Log.i(this.getClass().getName(), "Canceled handwriting");
                 getActivity().setResult(Activity.RESULT_CANCELED);
                 getActivity().finish();
             }
@@ -124,8 +130,8 @@ public class HandwritingNoteFragment extends Fragment {
         mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                Log.i(Utils.LOG_TAG, "Saving image text");
-                Toast.makeText(getActivity(), "Saving...", Toast.LENGTH_SHORT).show();
+                Log.i(this.getClass().getName(), "Saving Bitmap");
+                Toast.makeText(getActivity(), R.string.saving_note, Toast.LENGTH_SHORT).show();
                 sendDataToParentActivity();
             }
         });
@@ -133,6 +139,7 @@ public class HandwritingNoteFragment extends Fragment {
         mClearButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
+                Log.i(this.getClass().getName(), "Clear canvas");
                 mHandwritingView.clear();
             }
         });
@@ -144,17 +151,28 @@ public class HandwritingNoteFragment extends Fragment {
     private void sendDataToParentActivity() {
         final String noteTitle = mTitleEditText.getText().toString();
         final Bitmap imageText = mHandwritingView.getBitmap();
-        Log.d(Utils.LOG_TAG, "Data from Handwriting: [" + noteTitle + "], " + imageText.toString());
+        Log.d(this.getClass().getName(), "Data from Handwriting: [" + noteTitle + "], " + imageText.toString());
+
+        final byte[] bytes = bitmapToByteArray(imageText);
+
         final Intent i = new Intent();
         i.putExtra(EXTRA_TITLE, noteTitle);
-
-        final ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        imageText.compress(Bitmap.CompressFormat.PNG, 100, stream);
-        final byte[] bytes = stream.toByteArray();
         i.putExtra(EXTRA_BITMAP, bytes);
 
         getActivity().setResult(Activity.RESULT_OK, i);
         getActivity().finish();
+    }
+
+    /**
+     * Transforms a bitmap to a byte array for saving space
+     *
+     * @param bmp bitmap to convert
+     * @return byte array with the bitmap data
+     */
+    private byte[] bitmapToByteArray(final Bitmap bmp) {
+        final ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        return stream.toByteArray();
     }
 
     /**

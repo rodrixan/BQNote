@@ -20,7 +20,6 @@ public class NoteListActivity extends SingleFragmentActivity implements NoteList
 
     @Override
     protected Fragment createFragment() {
-        Log.d(Utils.LOG_TAG, "NoteListFragment called");
         return NoteListFragment.newInstance();
     }
 
@@ -42,7 +41,6 @@ public class NoteListActivity extends SingleFragmentActivity implements NoteList
      * @return intent of the activity
      */
     public static Intent newIntent(final Context packageContext) {
-        Log.d(Utils.LOG_TAG, "NoteListActivity new Intent");
         final Intent i = new Intent(packageContext, NoteListActivity.class);
         return i;
     }
@@ -51,11 +49,11 @@ public class NoteListActivity extends SingleFragmentActivity implements NoteList
     public void onNoteSelected(final String html, final GetNoteHtmlTask task) {
 
         if (findViewById(R.id.detail_fragment_container) == null) {
-            Log.i(Utils.LOG_TAG, "Inflating for a phone");
+            Log.i(this.getClass().getName(), "Inflating note view for a phone");
             final Intent i = NoteViewActivity.newIntent(this, task.getNoteRef(), html);
             startActivity(i);
         } else {
-            Log.i(Utils.LOG_TAG, "Inflating for a tablet");
+            Log.i(this.getClass().getName(), "Inflating note view for a tablet");
             final Fragment detail = NoteViewFragment.newInstance(task.getNoteRef(), html);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.detail_fragment_container, detail)

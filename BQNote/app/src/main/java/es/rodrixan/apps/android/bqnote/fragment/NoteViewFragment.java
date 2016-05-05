@@ -28,6 +28,11 @@ public class NoteViewFragment extends Fragment {
     private WebView mWebView;
     private TextView mTitleTextView;
 
+    /**
+     * @param noteRef reference to note to show
+     * @param html    code to show
+     * @return instance of this fragment
+     */
     public static NoteViewFragment newInstance(final NoteRef noteRef, final String html) {
         final Bundle args = new Bundle();
         args.putParcelable(ARG_NOTEREF, noteRef);

@@ -37,9 +37,9 @@ import java.util.List;
 import es.rodrixan.apps.android.bqnote.R;
 import es.rodrixan.apps.android.bqnote.activity.HandwritingNoteActivity;
 import es.rodrixan.apps.android.bqnote.task.CreateNewNoteTask;
+import es.rodrixan.apps.android.bqnote.task.DeleteNoteTask;
 import es.rodrixan.apps.android.bqnote.task.FindNotesTask;
 import es.rodrixan.apps.android.bqnote.task.GetNoteHtmlTask;
-import es.rodrixan.apps.android.bqnote.task.SendBitmapOCRTask;
 import es.rodrixan.apps.android.bqnote.util.EvernoteUtils;
 import es.rodrixan.apps.android.bqnote.util.Utils;
 
@@ -48,30 +48,12 @@ import es.rodrixan.apps.android.bqnote.util.Utils;
  */
 public class NoteListFragment extends Fragment {
 
-    private static final String SAVED_SUBTITLE_SHOWN = "subtitle";
     private static final String SAVED_FILTER = "filter";
     private static final String DIALOG_NEW_NOTE = "dialog new note";
     private static final int REQUEST_NEW_NOTE = 0;
-    private static final int REQUEST_HANDWRITTEN_NOTE = 1;
+    private static final int REQUEST_HANDWRITING_NOTE = 1;
 
     private static final int MAX_NOTES = 20;
-
-    private SwipeRefreshLayout mSwipeRefreshLayout;
-    private TextView mEmptyView;
-    private CoordinatorLayout mCoordinatorLayout;
-
-    private RecyclerView mRecyclerView;
-    private NoteAdapter mAdapter;
-    private List<NoteRef> mNoteRefList;
-    private int mLastOffset = MAX_NOTES;
-
-    private boolean mShowSubtitle = true;
-    private Callbacks mCallbacks;
-
-    private NoteFilter mNoteFilter = null;
-
-    private String mHandwritingNoteTitle;
-
 
     /**
      * Callbacks for the activity to implement
@@ -90,6 +72,20 @@ public class NoteListFragment extends Fragment {
          */
         void setToolBar(Toolbar toolbar);
     }
+
+    private Callbacks mCallbacks;
+
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private TextView mEmptyView;
+    private CoordinatorLayout mCoordinatorLayout;
+
+    private RecyclerView mRecyclerView;
+    private NoteAdapter mAdapter;
+    private List<NoteRef> mNoteRefList;
+
+    private NoteFilter mNoteFilter = null;
+
+    private int mLastOffset = MAX_NOTES;
 
     /**
      * @return new instance of  this fragment
@@ -130,7 +126,7 @@ public class NoteListFragment extends Fragment {
         wireCoordinatorLayout(v);
 
         restoreData(savedInstanceState);
-        loadData();
+        loadDataFromEvernote();
 
         updateUI();
 
@@ -204,6 +200,7 @@ public class NoteListFragment extends Fragment {
      * Launches the new note dialog
      */
     private void launchNewNoteDialog() {
+        Log.i(this.getClass().getName(), "New note dialog requested");
         final FragmentManager manager = getActivity().getSupportFragmentManager();
         final NewNoteDialogFragment dialog = NewNoteDialogFragment.newInstance();
         dialog.setTargetFragment(this, REQUEST_NEW_NOTE);
@@ -216,8 +213,9 @@ public class NoteListFragment extends Fragment {
      * @param savedInstanceState data to restore
      */
     private void restoreData(final Bundle savedInstanceState) {
+
         if (savedInstanceState != null) {
-            mShowSubtitle = savedInstanceState.getBoolean(SAVED_SUBTITLE_SHOWN);
+            Log.i(this.getClass().getName(), "Restoring data");
             mNoteFilter = (NoteFilter) savedInstanceState.getSerializable(SAVED_FILTER);
         }
         mNoteRefList = new ArrayList<>();
@@ -226,7 +224,7 @@ public class NoteListFragment extends Fragment {
     @Override
     public void onSaveInstanceState(final Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean(SAVED_SUBTITLE_SHOWN, mShowSubtitle);
+        Log.i(this.getClass().getName(), "Saving data");
         outState.putSerializable(SAVED_FILTER, mNoteFilter);
     }
 
@@ -239,76 +237,11 @@ public class NoteListFragment extends Fragment {
     /**
      * Fetchs new notes from the server
      */
-    private void loadData() {
+    private void loadDataFromEvernote() {
+        Log.i(this.getClass().getName(), "Loading notes");
         forceRefresh();
-        Log.i(Utils.LOG_TAG, "Loading notes");
-        new FindNotesTask(0, mLastOffset, mNoteFilter).start(this);
+        new FindNotesTask(0, mLastOffset, mNoteFilter).start(this, "find");
         mLastOffset += MAX_NOTES;
-    }
-
-    /**
-     * Refresh the GUI
-     */
-    public void updateUI() {
-        updateAdapter();
-        updateSubtitle();
-        updateEmptyView();
-    }
-
-    /**
-     * Loads the adapter with new data
-     */
-    private void updateAdapter() {
-
-        if (isAdded()) {
-            if (mAdapter == null) {
-                Log.d(Utils.LOG_TAG, "Updating adapter from zero");
-                mAdapter = new NoteAdapter(mNoteRefList);
-            } else {
-                Log.d(Utils.LOG_TAG, "Updating adapter from setNotes method");
-                mAdapter.setNotes(mNoteRefList);
-                mAdapter.notifyDataSetChanged();
-            }
-        }
-    }
-
-    /**
-     * Keeps the count of total notes
-     */
-    private void updateSubtitle() {
-
-        final String subtitle = createSubtitle();
-        setSubtitleText(subtitle);
-    }
-
-    /**
-     * @return text for the subtitle, according to number of notes
-     */
-    private String createSubtitle() {
-        final int nNotes = mNoteRefList.size();
-
-        return (!mShowSubtitle) ? null : getResources().getQuantityString(R.plurals.subtitle_plurals, nNotes, nNotes);
-    }
-
-    private void setSubtitleText(final String subtitle) {
-        final AppCompatActivity activity = (AppCompatActivity) getActivity();
-        activity.getSupportActionBar().setSubtitle(subtitle);
-    }
-
-    /**
-     * Feedback for the user when there's no data:
-     * If the adapter is empty and is not loading, show a textView, informing of that state
-     */
-    private void updateEmptyView() {
-        if (mNoteRefList.size() == 0) {
-            if (!mSwipeRefreshLayout.isRefreshing()) {
-                mEmptyView.setVisibility(View.VISIBLE);
-                mRecyclerView.setVisibility(View.GONE);
-            }
-        } else {
-            mEmptyView.setVisibility(View.GONE);
-            mRecyclerView.setVisibility(View.VISIBLE);
-        }
     }
 
     /**
@@ -324,13 +257,81 @@ public class NoteListFragment extends Fragment {
     }
 
     /**
+     * Refresh the GUI
+     */
+    public void updateUI() {
+        updateAdapter();
+        updateSubtitle();
+        updateEmptyView();
+    }
+
+    /**
+     * Loads the adapter with new data
+     */
+    private void updateAdapter() {
+        if (isAdded()) {
+            if (mAdapter == null) {
+                Log.d(this.getClass().getName(), "Updating adapter from zero");
+                mAdapter = new NoteAdapter(mNoteRefList);
+            } else {
+                Log.d(this.getClass().getName(), "Updating adapter from setNotes method");
+                mAdapter.setNotes(mNoteRefList);
+                mAdapter.notifyDataSetChanged();
+            }
+        }
+    }
+
+    /**
+     * Keeps the count of total notes
+     */
+    private void updateSubtitle() {
+        final String subtitle = createSubtitle();
+        setSubtitleText(subtitle);
+    }
+
+    /**
+     * @return text for the subtitle, according to number of notes
+     */
+    private String createSubtitle() {
+        final int nNotes = mNoteRefList.size();
+        return getResources().getQuantityString(R.plurals.subtitle_plurals, nNotes, nNotes);
+    }
+
+    /**
+     * Sets the number of notes under the activity title
+     *
+     * @param subtitle text to set
+     */
+    private void setSubtitleText(final String subtitle) {
+        final AppCompatActivity activity = (AppCompatActivity) getActivity();
+        activity.getSupportActionBar().setSubtitle(subtitle);
+    }
+
+    /**
+     * Feedback for the user when there's no data:
+     * If the adapter is empty and is not loading, show a textView, informing of that state
+     */
+    private void updateEmptyView() {
+        if (mNoteRefList.size() == 0) {
+            if (!mSwipeRefreshLayout.isRefreshing()) {
+                Log.i(this.getClass().getName(), "No notes to show");
+                mEmptyView.setVisibility(View.VISIBLE);
+                mRecyclerView.setVisibility(View.GONE);
+            }
+        } else {
+            mEmptyView.setVisibility(View.GONE);
+            mRecyclerView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /**
      * Called when the loading progress is done. Charges the inner list of notes for the adapter.
      *
      * @param noteRefList list of notes
      */
-    @TaskResult
+    @TaskResult(id = "find")
     public void onFindNotes(final List<NoteRef> noteRefList) {
-        Log.i(Utils.LOG_TAG, "Loaded notes");
+        Log.i(this.getClass().getName(), "Notes loaded");
         if (noteRefList == null || noteRefList.isEmpty()) {
             Snackbar.make(mCoordinatorLayout, R.string.no_notes, Snackbar.LENGTH_SHORT).show();
         } else {
@@ -347,7 +348,6 @@ public class NoteListFragment extends Fragment {
         mSwipeRefreshLayout.setRefreshing(false);
     }
 
-
     @Override
     public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
@@ -359,18 +359,18 @@ public class NoteListFragment extends Fragment {
 
         switch (item.getItemId()) {
             case R.id.action_logout:
-                Log.i(Utils.LOG_TAG, "Logout from evernote");
+                Log.i(this.getClass().getName(), "Logout from evernote");
                 EvernoteUtils.logoutEvernote(getActivity());
                 return true;
             case R.id.action_order_create:
                 createNoteFilterSort(NoteSortOrder.CREATED, false);
-                Log.i(Utils.LOG_TAG, "Sorting by modification");
-                loadData();
+                Log.i(this.getClass().getName(), "Sorting by modification");
+                loadDataFromEvernote();
                 return true;
             case R.id.action_order_title:
                 createNoteFilterSort(NoteSortOrder.TITLE, true);
-                Log.i(Utils.LOG_TAG, "Sorting by title");
-                loadData();
+                Log.i(this.getClass().getName(), "Sorting by title");
+                loadDataFromEvernote();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -393,7 +393,7 @@ public class NoteListFragment extends Fragment {
      * Called when the swipeLyout is refreshing. Loads new data
      */
     private void refreshItems() {
-        loadData();
+        loadDataFromEvernote();
     }
 
 
@@ -401,7 +401,7 @@ public class NoteListFragment extends Fragment {
      * Holder for a Evernote note in the RecyclerView
      * Implements OnClickListener in order to select a note
      */
-    private class NoteHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    private class NoteHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         private TextView mTitleTextView;
 
         private NoteRef mNoteRef;
@@ -410,6 +410,7 @@ public class NoteListFragment extends Fragment {
             super(itemView);
 
             itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
 
             wireComponents(itemView);
         }
@@ -435,10 +436,16 @@ public class NoteListFragment extends Fragment {
 
         @Override
         public void onClick(final View v) {
-            Log.i(Utils.LOG_TAG, "Displaying note: " + mNoteRef.getGuid());
+            Log.i(this.getClass().getName(), "Display note requested: " + mNoteRef.getGuid());
             new GetNoteHtmlTask(mNoteRef).start(NoteListFragment.this, "html");
         }
 
+        @Override
+        public boolean onLongClick(final View v) {
+            Log.i(this.getClass().getName(), "Delete note requested: " + mNoteRef.getGuid());
+            new DeleteNoteTask(mNoteRef.getGuid()).start(NoteListFragment.this, "delete");
+            return true;
+        }
     }//END_NoteHolder
 
     /**
@@ -453,6 +460,18 @@ public class NoteListFragment extends Fragment {
         startNoteActivity(html, task);
     }
 
+    @TaskResult(id = "delete")
+    public void onDeletedNote(final Boolean result) {
+        if (result) {
+            Log.i(this.getClass().getName(), "Note deleted");
+            Snackbar.make(mCoordinatorLayout, R.string.deleted_note_ok, Snackbar.LENGTH_SHORT).show();
+            loadDataFromEvernote();
+        } else {
+            Log.e(this.getClass().getName(), "Error on note deleted");
+            Snackbar.make(mCoordinatorLayout, R.string.deleted_note_error, Snackbar.LENGTH_SHORT).show();
+        }
+    }
+
     /**
      * Launches the detail activity (or fragment) for showing a note
      *
@@ -460,40 +479,62 @@ public class NoteListFragment extends Fragment {
      * @param task task in charge of loading the html
      */
     private void startNoteActivity(final String html, final GetNoteHtmlTask task) {
-        Log.d(Utils.LOG_TAG, "launching Note Activity");
         updateUI();
+        Log.i(this.getClass().getName(), "Launch note view");
         mCallbacks.onNoteSelected(html, task);
     }
 
     @Override
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+
         if (resultCode != Activity.RESULT_OK) {
+            Log.d(this.getClass().getName(), "Activity result not OK");
             return;
         }
 
         if (requestCode == REQUEST_NEW_NOTE) {
-
+            Log.d(this.getClass().getName(), "Request code: new note");
             final boolean requestHandwriting = NewNoteDialogFragment.getCreateHandwritingFromIntentExtra(data);
             if (requestHandwriting) {
-                Log.d(Utils.LOG_TAG, "Starting handwriting activity");
-                startHandwriteNoteActivity();
+                Log.i(this.getClass().getName(), "Launching handwriting");
+                startHandwritingNoteActivity();
                 return;
             }
+            Log.i(this.getClass().getName(), "Request for saving regular note");
+            sendRegularNoteToEvernote(data);
 
-            final String title = NewNoteDialogFragment.getNoteTitleFromIntentExtra(data);
-            final String content = NewNoteDialogFragment.getNoteContentFromIntentExtra(data);
-            if (title == null || content == null) {
-                Log.d(Utils.LOG_TAG, "Empty fields on new note");
-                Snackbar.make(mCoordinatorLayout, R.string.create_note_empty_fields, Snackbar.LENGTH_SHORT).show();
-                return;
-            }
-
-            Snackbar.make(mCoordinatorLayout, R.string.create_note_ok, Snackbar.LENGTH_SHORT).show();
-            createNote(title, content);
-
-        } else if (requestCode == REQUEST_HANDWRITTEN_NOTE) {
-            sendBitMapOCR(data);
+        } else if (requestCode == REQUEST_HANDWRITING_NOTE) {
+            Log.d(this.getClass().getName(), "Request code: handwriting note");
+            Log.i(this.getClass().getName(), "Request for saving handwriting note");
+            sendHandwritingNoteToEvernote(data);
         }
+    }
+
+    /**
+     * Launches the activity for creating a handwritten note
+     */
+    private void startHandwritingNoteActivity() {
+        Log.i(this.getClass().getName(), "Launching HandwritingNote Activity");
+        updateUI();
+        final Intent i = HandwritingNoteActivity.newIntent(getActivity());
+        startActivityForResult(i, REQUEST_HANDWRITING_NOTE);
+    }
+
+    /**
+     * Sends the received data from regular note to Evernote
+     *
+     * @param data intent containing data to send
+     */
+    private void sendRegularNoteToEvernote(final Intent data) {
+        final String title = NewNoteDialogFragment.getNoteTitleFromIntentExtra(data);
+        final String content = NewNoteDialogFragment.getNoteContentFromIntentExtra(data);
+        if (title == null || content == null) {
+            Log.d(this.getClass().getName(), "Empty fields on new note");
+            Snackbar.make(mCoordinatorLayout, R.string.create_note_empty_fields, Snackbar.LENGTH_SHORT).show();
+            return;
+        }
+
+        createNote(title, content, null);
     }
 
     /**
@@ -501,25 +542,15 @@ public class NoteListFragment extends Fragment {
      *
      * @param data intent where the data come from
      */
-    private void sendBitMapOCR(final Intent data) {
-        mHandwritingNoteTitle = HandwritingNoteFragment.getNoteTitleFromIntentExtra(data);
+    private void sendHandwritingNoteToEvernote(final Intent data) {
+        final String title = HandwritingNoteFragment.getNoteTitleFromIntentExtra(data);
         final Bitmap bitmap = HandwritingNoteFragment.getBitmapFromIntentExtra(data);
-        if (mHandwritingNoteTitle == null || bitmap == null || mHandwritingNoteTitle.isEmpty()) {
-            Log.d(Utils.LOG_TAG, "Empty fields on handwritten note");
+        if (title == null || bitmap == null || title.isEmpty()) {
+            Log.d(this.getClass().getName(), "Empty fields on handwritten note");
             Snackbar.make(mCoordinatorLayout, R.string.create_note_empty_fields, Snackbar.LENGTH_SHORT).show();
             return;
         }
-        new SendBitmapOCRTask(bitmap, getActivity()).start(this);
-    }
-
-    /**
-     * Launches the activity for creating a handwritten note
-     */
-    private void startHandwriteNoteActivity() {
-        Log.d(Utils.LOG_TAG, "launching HandwritingNote Activity");
-        updateUI();
-        final Intent i = HandwritingNoteActivity.newIntent(getActivity());
-        startActivityForResult(i, REQUEST_HANDWRITTEN_NOTE);
+        createNote(title, null, bitmap);
     }
 
     /**
@@ -527,29 +558,22 @@ public class NoteListFragment extends Fragment {
      *
      * @param title   title of the note
      * @param content content of the note
+     * @param bitmap  bitmap from handwriting note
      */
-    public void createNote(final String title, final String content) {
-        new CreateNewNoteTask(title, content).start(this);
+    public void createNote(final String title, final String content, final Bitmap bitmap) {
+        Log.i(this.getClass().getName(), "Sending note: " + title + ", " + content + ", " + bitmap.toString());
+        new CreateNewNoteTask(title, content, bitmap, getActivity()).start(this, "create");
     }
 
-    @TaskResult
+    @TaskResult(id = "create")
     public void onCreateNewNote(final Note note) {
         if (note != null) {
-            Log.i(Utils.LOG_TAG, "New note created");
-            loadData();//this calls updateUI
+            Log.i(this.getClass().getName(), "New note created");
+            Snackbar.make(mCoordinatorLayout, R.string.create_note_ok, Snackbar.LENGTH_SHORT).show();
+            loadDataFromEvernote();
         } else {
             Snackbar.make(mCoordinatorLayout, R.string.create_note_error, Snackbar.LENGTH_SHORT).show();
         }
-    }
-
-
-    @TaskResult
-    public void onReceivedText(final String imgText) {
-        if (imgText == null || imgText.isEmpty() || imgText.equals("null")) {
-            Snackbar.make(mCoordinatorLayout, R.string.create_note_empty_fields, Snackbar.LENGTH_SHORT).show();
-            return;
-        }
-        createNote(mHandwritingNoteTitle, imgText);
     }
 
     /**
