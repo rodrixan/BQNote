@@ -28,7 +28,7 @@ import es.rodrixan.apps.android.bqnote.util.Utils;
  */
 public class SendBitmapOCRTask extends BaseTask<String> {
     private static final String OCR_API_URL = "https://api.ocr.space/parse/image";
-    private static final String OCR_API_KEY = "efeeebde6588957";
+    private static final String OCR_API_KEY = "helloworld";
     //always the same file for overriding it
     private static final String IMG_NAME = "IMG_HANDWRITING_NOTE.png";
 
@@ -119,7 +119,7 @@ public class SendBitmapOCRTask extends BaseTask<String> {
 
         final Uri.Builder uriBuilder = ENDPOINT.buildUpon().appendQueryParameter("file", file.toString() + "/" + IMG_NAME);
         final String uriString = uriBuilder.build().toString();
-        Log.i(Utils.LOG_TAG, "Building URL: " + uriString);
+        Log.i(Utils.LOG_TAG, "Building URL: " + uriString.replace("%2F", "/"));
         return uriString;
     }
 
@@ -134,9 +134,9 @@ public class SendBitmapOCRTask extends BaseTask<String> {
             final JSONObject jsonBody = new JSONObject(jsonString);
             return parseItems(jsonBody);
         } catch (final IOException ioe) {
-            Log.e(Utils.LOG_TAG, "Failed to fetch text", ioe);
+            Log.e(Utils.LOG_TAG, "Failed to fetch text:" + ioe.getMessage());
         } catch (final JSONException je) {
-            Log.e(Utils.LOG_TAG, "Failed to parse JSON", je);
+            Log.e(Utils.LOG_TAG, "Failed to parse JSON:" + je.getMessage());
         }
         return null;
     }
@@ -149,9 +149,10 @@ public class SendBitmapOCRTask extends BaseTask<String> {
      * @throws JSONException
      */
     private String parseItems(final JSONObject jsonBody) throws JSONException {
-        final JSONObject photosJSONObject = jsonBody.getJSONObject("ParsedText");
         final Gson gson = new Gson();
-        final String parsedString = (String) gson.fromJson(photosJSONObject.toString(), String.class);
+        //If there's not such parsed text, it will throw an exception
+        final JSONObject textJSONObject = jsonBody.getJSONObject("ParsedText");
+        final String parsedString = (String) gson.fromJson(textJSONObject.toString(), String.class);
         Log.i(Utils.LOG_TAG, "Parsed string: " + parsedString);
         return parsedString;
     }

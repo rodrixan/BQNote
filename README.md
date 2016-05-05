@@ -98,7 +98,7 @@ User can choose between plain text inputor handwriting input, as shown below:
 
 ![add_hand_img][handwriting]
 
-**Note: this is not functional yet. The app has all the required permissions to write in external storage, and sdcard is writable, but one it tries to write on it, "FileNotFoundException: Read Only System" is shown**
+**Note: this is not functional yet. The app send the image, but server response is null**
 
 _All screenshots were taken in spanish version_
 

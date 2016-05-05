@@ -490,7 +490,7 @@ public class NoteListFragment extends Fragment {
 
             Snackbar.make(mCoordinatorLayout, R.string.create_note_ok, Snackbar.LENGTH_SHORT).show();
             createNote(title, content);
-            
+
         } else if (requestCode == REQUEST_HANDWRITTEN_NOTE) {
             sendBitMapOCR(data);
         }
@@ -545,8 +545,9 @@ public class NoteListFragment extends Fragment {
 
     @TaskResult
     public void onReceivedText(final String imgText) {
-        if (imgText == null || imgText.isEmpty()) {
+        if (imgText == null || imgText.isEmpty() || imgText.equals("null")) {
             Snackbar.make(mCoordinatorLayout, R.string.create_note_empty_fields, Snackbar.LENGTH_SHORT).show();
+            return;
         }
         createNote(mHandwritingNoteTitle, imgText);
     }
