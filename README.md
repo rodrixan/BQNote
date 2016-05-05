@@ -1,5 +1,6 @@
 # BQNote
 _Awaiting for OK_
+
 _All screenshots were taken in spanish version_
 
 Evernote Client for Android.
