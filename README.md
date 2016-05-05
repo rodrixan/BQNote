@@ -1,5 +1,6 @@
 # BQNote
 _Awaiting for OK_
+_All screenshots were taken in spanish version_
 
 Evernote Client for Android.
 
@@ -108,7 +109,6 @@ The user can choose between plain text input or handwriting input, as shown belo
 
 This allows the user to draw whatever is wanted, and save it as a regular note. For achieving this functionality, a bitmap is created then saved as a File on the external storage. Next step is to convert it into a Evernote resource for attaching it to a note that will be stored in the account.
 
-_All screenshots were taken in spanish version_
 
 [login]: https://github.com/rodrixan/BQNote/blob/master/screenshots/login.png 
 [list]: https://github.com/rodrixan/BQNote/blob/master/screenshots/note_list.png
