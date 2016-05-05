@@ -29,6 +29,7 @@ import es.rodrixan.apps.android.bqnote.util.Utils;
 public class SendBitmapOCRTask extends BaseTask<String> {
     private static final String OCR_API_URL = "https://api.ocr.space/parse/image";
     private static final String OCR_API_KEY = "efeeebde6588957";
+    //always the same file for overriding it
     private static final String IMG_NAME = "IMG_HANDWRITING_NOTE.png";
 
     private static final int BUFFER_MAX_SIZE = 1024;
@@ -40,7 +41,7 @@ public class SendBitmapOCRTask extends BaseTask<String> {
             .appendQueryParameter("languaje", "eng")
             .build();
 
-    private final File mImgFile;
+    private final File mImgFileDir;
 
     /**
      * @param bitmap  the bitmap to save as an image to send to the OCR Server
@@ -49,10 +50,10 @@ public class SendBitmapOCRTask extends BaseTask<String> {
     public SendBitmapOCRTask(final Bitmap bitmap, final Context context) {
         super((Class) String.class);
 
-        mImgFile = new File(context.getExternalFilesDir(
-                Environment.DIRECTORY_PICTURES), IMG_NAME);
-        Log.d(Utils.LOG_TAG, "File: " + mImgFile.getAbsolutePath().toString());
-        storeImage(bitmap, mImgFile);
+        mImgFileDir = new File(context.getExternalFilesDir(
+                Environment.DIRECTORY_PICTURES).toString());
+        Log.d(Utils.LOG_TAG, "File: " + mImgFileDir.toString() + "/" + IMG_NAME);
+        storeImage(bitmap, mImgFileDir);
 
     }
 
@@ -72,21 +73,19 @@ public class SendBitmapOCRTask extends BaseTask<String> {
     /**
      * Stores a bitmas as an image in the external storage
      *
-     * @param bitmap  bitmap to save
-     * @param imgFile file where to store the bitmap
+     * @param bitmap     bitmap to save
+     * @param imgFileDir directory where to store the bitmap
      */
-    private void storeImage(final Bitmap bitmap, final File imgFile) {
+    private void storeImage(final Bitmap bitmap, final File imgFileDir) {
         FileOutputStream fos = null;
-        Log.d(Utils.LOG_TAG, "isExternalStorageWritable " + isExternalStorageWritable());
+        Log.d(Utils.LOG_TAG, "isExternalStorageWritable: " + isExternalStorageWritable());
         try {
-            fos = new FileOutputStream(imgFile.getName());
+            imgFileDir.mkdirs();//creating dir if not exist
+            fos = new FileOutputStream(imgFileDir.toString() + "/" + IMG_NAME);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 95, fos);
+            fos.close();
         } catch (final FileNotFoundException e) {
             Log.e(Utils.LOG_TAG, "Error FileNotFoundException: " + e.getMessage());
-        }
-
-        bitmap.compress(Bitmap.CompressFormat.PNG, 95, fos);
-        try {
-            fos.close();
         } catch (final IOException e) {
             Log.e(Utils.LOG_TAG, "Error IOException: " + e.getMessage());
         }
@@ -96,7 +95,7 @@ public class SendBitmapOCRTask extends BaseTask<String> {
 
     @Override
     protected String checkedExecute() throws Exception {
-        return fetchTextFromImgOCR(mImgFile);
+        return fetchTextFromImgOCR(mImgFileDir);
     }
 
     /**
@@ -118,7 +117,7 @@ public class SendBitmapOCRTask extends BaseTask<String> {
      */
     private String buildOCRServerUrl(final File file) {
 
-        final Uri.Builder uriBuilder = ENDPOINT.buildUpon().appendQueryParameter("file", file.getAbsolutePath());
+        final Uri.Builder uriBuilder = ENDPOINT.buildUpon().appendQueryParameter("file", file.toString() + "/" + IMG_NAME);
         final String uriString = uriBuilder.build().toString();
         Log.i(Utils.LOG_TAG, "Building URL: " + uriString);
         return uriString;
