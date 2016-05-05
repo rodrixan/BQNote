@@ -98,9 +98,9 @@ User can choose between plain text inputor handwriting input, as shown below:
 
 ![add_hand_img][handwriting]
 
-**note: this is not 100% functional yet**
+**Note: this is not functional yet. The app has all the required permissions to write in external storage, and sdcard is writable, but one it tries to write on it, "FileNotFoundException: Read Only System" is shown**
 
-_all the screenshots where taken in spanish version_
+_All screenshots were taken in spanish version_
 
 [login]: https://github.com/rodrixan/BQNote/blob/master/screenshots/login.png 
 [list]: https://github.com/rodrixan/BQNote/blob/master/screenshots/note_list.png 
